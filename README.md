@@ -71,10 +71,69 @@ Automatically act on your data and communicate using third-party services like T
 
 
 # PROGRAM:
+```
+#include "ThingSpeak.h"
+#include <WiFi.h>
+#include "DHT.h"
 
+
+char ssid[] = "Subbu";//your wifi ssid//
+char pass[] = "subbu1234";//your wifi pass//*/
+
+const  int out = 2;
+float Temperature = 0;
+float Humidity =0;
+WiFiClient client;
+DHT dht(out,DHT11);
+long myChannelField =3087414;
+const int TemperatureField = 1;
+const int HumidityField =2;
+const char* myWriteAPIKey = "XWWYE7PXRCC2MWTG";
+
+void setup() {
+  Serial.begin(115200);
+  ThingSpeak.begin(client);
+  dht.begin();
+  pinMode(out,INPUT);
+}
+
+void loop() {
+  if(WiFi.status() != WL_CONNECTED){
+    Serial.print("Attempting to connect to  SSID: ");
+    Serial.print(ssid);
+    while(WiFi.status() != WL_CONNECTED){
+      WiFi.begin(ssid,pass);
+      Serial.print(".");
+      delay(5000);
+    }
+    Serial.println("\nConnected");
+  }
+  Temperature = dht.readTemperature();
+  Humidity = dht.readHumidity();
+
+
+
+Serial.print("Temperature: ");
+Serial.print(Temperature);
+Serial.println(" C\n");
+
+
+Serial.print("Humidity: ");
+Serial.print(Humidity);
+Serial.println(" g.m-3\n");
+
+ThingSpeak.setField(TemperatureField, Temperature);
+ThingSpeak.setField(HumidityField, Humidity);
+ThingSpeak.writeFields(myChannelField, myWriteAPIKey);
+delay(2500);
+}
+```
 # CIRCUIT DIAGRAM:
+<img width="1255" height="914" alt="image" src="https://github.com/user-attachments/assets/bd7e4053-74c5-4e8f-bc90-3fe0d48cf8a7" />
 
 # OUTPUT:
+<img width="1099" height="1037" alt="image" src="https://github.com/user-attachments/assets/c666d32d-a583-45a6-bd52-8f1b9d73df8f" />
+<img width="1745" height="928" alt="image" src="https://github.com/user-attachments/assets/6f8cfebd-d955-4a77-b12a-fdfa24d384c8" />
 
 # RESULT:
 
